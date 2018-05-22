@@ -6,6 +6,20 @@ body {
 	padding: 1rem 2rem;
 }
 
-h1 {
-	/*color: #FF7412;*/
+.container {
+	width: 90%;
+}
+
+#clock {
+	width: 75%;
+	padding: 0px;
+	margin: 0px;
+	display: block;
+	vertical-align: middle;
+}
+
+#clock-col {
+	display: flex;
+	align-items: center;
+  justify-content: center;
 }
