@@ -7,7 +7,22 @@ body {
 }
 
 .container {
-	width: 90%;
+	width: 100%;
+}
+
+.wrapper {
+	margin: 0px 0px;
+	padding: 0px 0px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	margin: 10px 0px;
+}
+
+.panel {
+	border: 1px solid #FFFFFF;
+	border-radius: 3px;
+	padding: 10px 10px;
 }
 
 #clock {
@@ -22,4 +37,52 @@ body {
 	display: flex;
 	align-items: center;
   justify-content: center;
+}
+
+#weather-main-wrapper {
+	display: inline-flex;
+	align-items: center;
+	justify-content: start;
+	line-height: 64px;
+}
+
+#weather-main {
+	display: inline;
+	line-height: 64px;
+	margin: 0px;
+}
+
+#weather-conditions {
+	font-size: 24px;
+	padding: 0px 20px;
+}
+
+#weather-weekly > .col {
+	text-align: center;
+	padding: 5px;
+}
+
+#weather-weekly .panel {
+	padding: 5px 10px 5px;
+	width: 80px;
+}
+
+#weather-weekly .day {
+	font-size: 24px;
+	margin: 0px 0px;
+}
+
+#weather-weekly i {
+	font-size: 36px;
+	padding: 10px 2px;
+}
+
+#weather-weekly .daily-high {
+	font-size: 20px;
+	margin: 0px 0px;
+}
+
+#weather-weekly .daily-low {
+	font-size: 18px;
+	margin: 0px 0px;
 }

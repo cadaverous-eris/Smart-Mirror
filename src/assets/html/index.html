@@ -31,34 +31,32 @@
 			<div id="date-time" class="row">
 				<div class="col s9">
 					<h3 id="date"></h3>
+					<div id='holiday-holder'></div>
 					<h1 id="time"></h1>
 				</div>
 				<div id="clock-col" class="col s3">
 					<canvas id='clock' style='padding: 0px; margin: 0px; display: block;'></canvas>
 				</div>
 			</div>
-			
-			<br>
-			
 			<div class="row">
 				<div class="col m12">
 					<div id="weather">
-						<h3 id="weather-main"> <span id="temp"></span></h3>
-						<h6 id="weather-conditions"></h6>
+						<div id='weather-main-wrapper'>
+							<h3 id="weather-main"> <span id="temp"></span></h3><span id='weather-conditions'></span>
+						</div>
 						<h5><strong>High: </strong><span id="temp-high"></span> | <strong>Low: </strong><span id="temp-low"></span></h5>
-						
-						<!-- <h5><strong>High: </strong><span id="temp-high"></span></h5>
-						<h5><strong>Low: </strong><span id="temp-low"></span></h5> -->
 					</div>
 				</div>
 			</div>
-			<div class="row">
+			<div id="weather-weekly" class="row">
 				
-				<pre id="content"></pre>
+			</div>
+			
+			<div class="row">
+				<div id="content"></div>
 				
 				<button id="authorize-button" style="display: none;">Authorize</button>
 				<button id="signout-button" style="display: none;">Sign Out</button>
-				
 			</div>
 		</div>
 		

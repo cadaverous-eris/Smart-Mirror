@@ -4,10 +4,17 @@ const GOOGLE_API_KEY = 'AIzaSyBn4GZL3ykf8_qt1tEvF-yyINb8RPvZLmk';
 const GOOGLE_DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest"];
 const GOOGLE_SCOPES = "https://www.googleapis.com/auth/calendar.readonly";
 
-// Weather API stuff
+// OpenWeatherMap API stuff
 const OWM_API_KEY = '70b5674ba55c47e1b4f1f12569624225';
 const city = 'Washington';
 const state = 'DC';
+
+// Dark Sky API Weather stuff
+const DARK_SKY_API_KEY = 'a02966f9f5e7bbe9cf6a385b474944d3';
+
+
+// Holiday API stuff
+const HOLIDAY_API_KEY = '73391103-eff5-42e5-ac7d-c326391b6685';
 
 // Google login and logout buttons 
 var authorizeButton;
@@ -18,8 +25,6 @@ $(document).on('ready', () => {
 	// date and time elements
 	var date = $('#date');
 	var time = $('#time');
-	var clock = document.getElementById('clock');
-	var ctx = clock.getContext('2d');
 	
 	// init Google login and logout buttons
 	authorizeButton = $('#authorize-button');
@@ -35,60 +40,33 @@ $(document).on('ready', () => {
 	// update weather every 15 minutes
 	setInterval(getWeather, 900000);
 	
-	// draw the clock with the current time
-	function drawClock() {
-		$('#clock-col').height($('#date-time').height());
-		
-		let dim = $(clock).width();
-		
-		clock.width = dim;
-		clock.height = dim;
-		clock.style.width = dim;
-		clock.style.height = dim;
-		
-		let now = new Date();
-		let hour = now.getHours();
-		hour = hour % 12;
-    let minute = now.getMinutes();
-		let second = now.getSeconds();
-		
-		ctx.strokeStyle = '#FFFFFF';
-		ctx.fillStyle = '#FFFFFF';
-		ctx.lineWidth = 4;
-		ctx.beginPath();
-		let radius = (dim / 2) - ctx.lineWidth;
-		ctx.arc(dim / 2, dim / 2, radius, 0, 2 * Math.PI);
-		ctx.stroke();
-		
-		ctx.beginPath();
-		ctx.arc(dim / 2, dim / 2, 3, 0, 2 * Math.PI);
-		ctx.fill();
-		
-		hour = (hour * Math.PI / 6) + (minute * Math.PI / (6 * 60)) + (second * Math.PI / (360 * 60));
-		drawHand(hour, radius * 0.5, 4);
-		minute = (minute * Math.PI / 30) + (second * Math.PI / (30 * 60));
-		drawHand(minute, radius * 0.8, 3);
-		
-		function drawHand(t, length, width) {
-			ctx.lineWidth = width;
-			
-			ctx.beginPath();
-			ctx.translate(dim / 2, dim / 2);
-			ctx.moveTo(0, 0);
-			ctx.rotate(t);
-			ctx.lineTo(0, -length);
-			ctx.stroke();
-			ctx.rotate(-t);
-			ctx.translate(-dim / 2, -dim / 2);
-		}
-	}
-	
 	// get the current time and update the display
 	function updateTime() {
-		date.text(moment().format('dddd, MMMM Do YYYY'));
+		let prevDay = date.text();
+		let currentDay = moment().format('dddd, MMMM Do YYYY');
+		
+		date.text(currentDay);
 		time.text(moment().format('h:mm a'));
 		
-		drawClock();
+		if (prevDay !== currentDay) {
+			let query = 'https://holidayapi.com/v1/holidays?key=' + HOLIDAY_API_KEY +
+				'&country=US&year=' + moment().get('year') +
+				'&month=' + (moment().get('month') + 1) +
+				'&day=' + moment().get('date');
+			$.ajax({
+				url: query,
+				method: "GET"
+			}).done(res => {
+				if (res.holidays.length > 0) {
+					let holidays = res.holidays.map(holiday => {
+						return holiday.public ? '<strong>' + holiday.name + '</strong>' : holiday.name;
+					}).join(', ');
+					$('#holiday-holder').html('<h5>' + holidays + '</h5>');
+				} else {
+					$('#holiday-holder').empty();
+				}
+			});
+		}
 	}
 	
 });
@@ -140,6 +118,21 @@ function getWeather() {
 		if (forecast.length > 0) {
 			$('#temp-high').text(forecast[0].high + '\xB0' + 'F');
 			$('#temp-low').text(forecast[0].low + '\xB0' + 'F');
+			
+			$('#weather-weekly').empty();
+			for (let i = 1; i < 6 && i < forecast.length; i++) {
+				let col = $('<div>').addClass('col');
+				let panel = $('<div>').addClass('panel daily-forecast');
+				let dayWeather = forecast[i];
+				
+				panel.append($('<p>').addClass('day').text(dayWeather.day.toUpperCase()));
+				panel.append($('<i>').addClass('wi wi-yahoo-' + dayWeather.code));
+				panel.append($('<p>').addClass('daily-high').text(dayWeather.high + '\xB0' + 'F'));
+				panel.append($('<p>').addClass('daily-low').text(dayWeather.low + '\xB0' + 'F'));
+				
+				col.append(panel);
+				$('#weather-weekly').append(col);
+			}
 		}
 		
 	});
@@ -160,7 +153,7 @@ function initClient() {
 	}).then(function () {
 		// listen for sign-in state changes.
 		gapi.auth2.getAuthInstance().isSignedIn.listen(updateSigninStatus);
-
+		
 		// handle the initial sign-in state.
 		updateSigninStatus(gapi.auth2.getAuthInstance().isSignedIn.get());
 		authorizeButton.on('click', handleAuthClick);
@@ -192,18 +185,6 @@ function handleSignoutClick(event) {
 }
 
 /**
- * append a pre element to the body containing the given message
- * as its text node
- * used to display the results of the API call
- *
- * @param {string} message Text to be placed in pre element.
- */
-function appendPre(message) {
-	var pre = $('#content');
-	pre.append(document.createTextNode(message + '\n'));
-}
-
-/**
  * Print the summary and start datetime/date of the next ten events in
  * the authorized user's calendar. If no events are found an
  * appropriate message is printed.
@@ -218,19 +199,28 @@ function listUpcomingEvents() {
 		'orderBy': 'startTime'
 	}).then(function(response) {
 		var events = response.result.items;
-		appendPre('Upcoming events:');
-
+		var content = $('#content');
+		content.empty();
+		
 		if (events.length > 0) {
+			content.prepend('<h5>Upcoming events:</h5>');
+			var list = $('<ul>');
+			
 			for (i = 0; i < events.length; i++) {
-				var event = events[i];
-				var when = event.start.dateTime;
+				let event = events[i];
+				
+				let when = event.start.dateTime;
 				if (!when) {
 					when = event.start.date;
 				}
-				appendPre(event.summary + ' (' + when + ')')
+				let date = moment(when).format("dddd, M/D/YY, h:mm a");
+				var listItem = $('<li>').text(event.summary + ' (' + date + ')');
+				list.append(listItem);
 			}
+			
+			content.append(list);
 		} else {
-			appendPre('No upcoming events found.');
+			content.prepend('<h5>No upcoming events found</h5>');
 		}
 	});
 }
