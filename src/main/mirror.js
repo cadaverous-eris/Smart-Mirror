@@ -12,10 +12,6 @@ const state = 'DC';
 // Dark Sky API Weather stuff
 const DARK_SKY_API_KEY = 'a02966f9f5e7bbe9cf6a385b474944d3';
 
-
-// Holiday API stuff
-const HOLIDAY_API_KEY = '73391103-eff5-42e5-ac7d-c326391b6685';
-
 // Google login and logout buttons 
 var authorizeButton;
 var signoutButton;
@@ -49,7 +45,7 @@ $(document).on('ready', () => {
 		time.text(moment().format('h:mm a'));
 		
 		if (prevDay !== currentDay) {
-			let query = 'https://holidayapi.com/v1/holidays?key=' + HOLIDAY_API_KEY +
+			/*let query = 'https://holidayapi.com/v1/holidays?key=' + HOLIDAY_API_KEY +
 				'&country=US&year=' + moment().get('year') +
 				'&month=' + (moment().get('month') + 1) +
 				'&day=' + moment().get('date');
@@ -65,7 +61,7 @@ $(document).on('ready', () => {
 				} else {
 					$('#holiday-holder').empty();
 				}
-			});
+			});*/
 		}
 	}
 	

@@ -39,11 +39,17 @@ h1, h2, h3, h4, h5, h6 {
   justify-content: center;
 }
 
+#weather {
+	text-align: right;
+	float: right;
+}
+
 #weather-main-wrapper {
 	display: inline-flex;
 	align-items: center;
-	justify-content: start;
+	justify-content: end;
 	line-height: 64px;
+	text-align: right;
 }
 
 #weather-main {
@@ -54,35 +60,40 @@ h1, h2, h3, h4, h5, h6 {
 
 #weather-conditions {
 	font-size: 24px;
-	padding: 0px 20px;
+	padding: 0px 0px 0px 20px;
+}
+
+#weather-weekly {
+	float: right;
+	padding-top: 20px;
 }
 
 #weather-weekly > .col {
 	text-align: center;
-	padding: 5px;
+	padding: 2.5px;
 }
 
 #weather-weekly .panel {
 	padding: 5px 10px 5px;
-	width: 80px;
+	width: 72px;
 }
 
 #weather-weekly .day {
-	font-size: 24px;
-	margin: 0px 0px;
-}
-
-#weather-weekly i {
-	font-size: 36px;
-	padding: 10px 2px;
-}
-
-#weather-weekly .daily-high {
 	font-size: 20px;
 	margin: 0px 0px;
 }
 
-#weather-weekly .daily-low {
+#weather-weekly i {
+	font-size: 32px;
+	padding: 10px 2px;
+}
+
+#weather-weekly .daily-high {
 	font-size: 18px;
+	margin: 0px 0px;
+}
+
+#weather-weekly .daily-low {
+	font-size: 16px;
 	margin: 0px 0px;
 }
